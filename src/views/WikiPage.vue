@@ -201,7 +201,7 @@
 </template>
 
 <script>
-import regionTerritorySpots from '@/store/fishingSpots.json'
+import normSpots from '@/store/fishingSpots.json'
 import placeNames from '@/store/placeNames.json'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import EorzeaSimpleMap from '@/components/basic/EorzeaSimpleMap'
@@ -215,6 +215,7 @@ import TreeModel from 'tree-model'
 import ClickHelper from '@/components/basic/ClickHelper'
 import FishList from '@/components/FishList'
 import OceanFishingFishList from '@/components/OceanFishingFishList/OceanFishingFishList'
+import FIX from '@/store/fix'
 
 export default {
   name: 'WikiPage',
@@ -259,14 +260,18 @@ export default {
     root: undefined,
     searchResults: { text: '', nodeIds: [] },
     forceShowComponents: undefined,
+    mode: 'spear', //'normal',
   }),
   computed: {
+    currentSpotsData() {
+      return this.mode === 'normal' ? normSpots : FIX.SPEAR_REGION_TERRITORY_POINT
+    },
     regionTerritorySpots() {
       if (
         this.lazyTransformedFishDict &&
         Object.keys(this.lazyTransformedFishDict).length > 0
       ) {
-        return regionTerritorySpots
+        return this.currentSpotsData
           .filter(region => region.id != null)
           .map(region => {
             // output += `region,${region.id},${placeNames[region.id]}\n`
@@ -300,9 +305,13 @@ export default {
                     }
                     return {
                       id: 'spot-' + spot.id,
-                      name: this.getFishingSpotsName(spot.id),
+                      name:
+                        this.mode === 'normal'
+                          ? this.getFishingSpotsName(spot.id)
+                          : placeNames[
+                              FIX.SPEAR_FISH_GATHERING_POINTS[spot.id].placeNameId
+                            ],
                       children: fishList.map(fishId => {
-                        // output += `fish,${fishId},${this.lazyTransformedFishDict[fishId].name}\n`
                         return {
                           id: 'spot-' + spot.id + '-fish-' + fishId,
                           name: this.lazyTransformedFishDict[fishId].name,
@@ -717,8 +726,17 @@ export default {
       this.$refs.spotMenu.updateAll(false)
     },
     assembleSpot(spotId) {
-      const spot = this.getFishingSpot(spotId)
-      return { ...spot, name: DataUtil.getName(spot) }
+      if (this.mode === 'normal') {
+        const spot = this.getFishingSpot(spotId)
+        return { ...spot, name: DataUtil.getName(spot) }
+      } else {
+        const gatheringPoint = FIX.SPEAR_FISH_GATHERING_POINTS[spotId]
+        // console.log('gp', spotId, {
+        //   ...gatheringPoint,
+        //   name: DataUtil.getName(gatheringPoint),
+        // })
+        return { ...gatheringPoint, name: DataUtil.getName(gatheringPoint) }
+      }
     },
     ...mapMutations(['setFishCompleted']),
   },

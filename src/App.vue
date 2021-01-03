@@ -907,6 +907,7 @@ import ImportExportDialog from '@/components/ImportExportDialog'
 import ImgUtil from '@/utils/ImgUtil'
 import FIX from '@/store/fix'
 import DIADEM from '@/store/diadem'
+import placeNames from '@/store/placeNames.json'
 
 export default {
   name: 'App',
@@ -1285,7 +1286,7 @@ export default {
 
     this.now = Date.now()
     this.lazyFishSourceList = Object.values(this.allFish).filter(
-      it => it.gig == null && (it.patch == null || it.patch <= DataUtil.PATCH_MAX)
+      it => it.patch == null || it.patch <= DataUtil.PATCH_MAX
     )
     this.lazyImportantFishSourceList = this.lazyFishSourceList.filter(
       it =>
@@ -1519,8 +1520,32 @@ export default {
         })
       }
     },
+    assembleSpearFish(fish) {
+      console.log('fishname', this.getItemName(fish._id))
+      return {
+        _id: fish._id,
+        id: fish._id,
+        icon: this.getItemIconClass(fish._id),
+        name: this.getItemName(fish._id),
+        // hasFishingSpot: false,
+        fishingSpots: fish.locations.map(location => {
+          const gatheringPoint = FIX.SPEAR_FISH_GATHERING_POINTS[location]
+          return {
+            zone: placeNames[gatheringPoint.territoryPlaceNameId],
+            fishingSpot: gatheringPoint,
+            fishingSpotName: DataUtil.getName(gatheringPoint),
+            fishingSpotId: location,
+            fishSpotPositionText: DataUtil.toPositionText(gatheringPoint),
+          }
+        }),
+      }
+    },
     assembleFish(fishSourceList, isPredator = false) {
       return fishSourceList.map(fish => {
+        if (fish.gig != null) {
+          // console.log('spear fish', fish)
+          return this.assembleSpearFish(fish)
+        }
         const hasPredators = Object.keys(fish.predators).length > 0
         const rate = this.lazyFishWindowRates[fish._id]
         const bestCatchPathExtra = fish.bestCatchPathExtra ?? []

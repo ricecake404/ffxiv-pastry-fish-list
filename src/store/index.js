@@ -13,7 +13,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    fish: DataUtil.mergeByReplacingArray(FishingData, FIX.FISH),
+    fish: DataUtil.mergeByReplacingArray(FishingData, FIX.FISH, FIX.SPEAR_FISH),
     fishingSpots: merge(DATA.FISHING_SPOTS, DATA_CN.FISHING_SPOTS),
     spearFishingSports: DATA.SPEARFISHING_SPOTS,
     items: DATA_CN.ITEMS,
