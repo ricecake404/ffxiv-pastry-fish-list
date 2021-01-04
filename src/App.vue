@@ -1578,6 +1578,8 @@ export default {
         predators: [], // TODO
 
         gig: DataUtil.GIG_DICT[fish.gig],
+        gigIcon: DataUtil.GIG_ICON[DataUtil.GIG_DICT[fish.gig]],
+        gigText: this.$t('gig.' + DataUtil.GIG_DICT[fish.gig]),
       }
     },
     assembleFish(fishSourceList, isPredator = false) {

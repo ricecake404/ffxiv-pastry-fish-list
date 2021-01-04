@@ -227,7 +227,11 @@
                 <div :class="fish.snaggingIcon" data-ck-action-name="钓组" />
               </div>
             </div>
-            <div class="d-flex">
+            <div v-if="fish.type === 'spear'" class="d-flex align-center">
+              <item-icon :icon-class="fish.gigIcon" :title="fish.gigText" />
+              <div>{{ fish.gigText }}</div>
+            </div>
+            <div v-else class="d-flex">
               <div class="d-flex align-center">
                 <i
                   class="xiv square-a"
