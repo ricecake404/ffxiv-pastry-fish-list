@@ -121,6 +121,7 @@
               :i="fishListLayout.i"
             >
               <div class="grid-content">
+                <!--                <code>{{ currentFishList }}</code>-->
                 <fish-list
                   :fish-list="currentFishList"
                   :fish-list-time-part="fishListTimePart"

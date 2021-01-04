@@ -1520,14 +1520,19 @@ export default {
         })
       }
     },
-    assembleSpearFish(fish) {
+    assembleSpearFish(fish, isPredator = false) {
+      const hasPredators = Object.keys(fish.predators).length > 0
+      const rate = this.lazyFishWindowRates[fish._id]
+      const folklore = fish.folklore && this.folklore[fish.folklore]
       return {
         _id: fish._id,
         id: fish._id,
+        type: 'spear',
         icon: this.getItemIconClass(fish._id),
+        iconRemoteUrl: null,
+        showHatCover: false,
         name: this.getItemName(fish._id),
-        gig: DataUtil.GIG_DICT[fish.gig],
-        // hasFishingSpot: false,
+        hasFishingSpot: true,
         fishingSpots: fish.locations.map(location => {
           const gatheringPoint = FIX.SPEAR_FISH_GATHERING_POINTS[location]
           return {
@@ -1538,6 +1543,41 @@ export default {
             fishSpotPositionText: DataUtil.toPositionText(gatheringPoint),
           }
         }),
+        baitsExtra: [],
+        baits: [],
+        hasFishEyes: false,
+        hasPredators: hasPredators,
+        hasSnagging: false,
+        startHourText: DataUtil.formatET(fish.startHour),
+        endHourText: DataUtil.formatET(fish.endHour),
+        hasTimeConstraint: fish.startHour !== 0 || fish.endHour !== 24,
+        requiredCnt: fish.requiredCnt ?? 0, // TODO
+        addBuffSuffix: false,
+        hasWeatherConstraint:
+          fish.previousWeatherSet.length > 0 || fish.weatherSet.length > 0,
+        previousWeatherSet: fish.previousWeatherSet,
+        weatherSet: fish.weatherSet,
+        previousWeatherSetDetail: this.getWeather(fish.previousWeatherSet),
+        weatherSetDetail: this.getWeather(fish.weatherSet),
+        patch: fish.patch, // TODO
+        folklore: folklore && {
+          id: folklore._id,
+          itemId: folklore.itemId,
+          name: this.getItemName(folklore.itemId),
+          icon: this.getItemIconClass(folklore.itemId),
+        }, // TODO
+        collectable: false, //TODO
+        isFuturePatch: fish.patch > DataUtil.PATCH_AVAILABLE_MAX,
+        rate: rate,
+        rateText: this.$t('countDown.rate', {
+          rate: ((rate ?? 1) * 100).toPrecision(2),
+        }),
+        isPredator: isPredator, // TODO
+        anglerFishId: fish.anglerFishId, // TODO
+        hasTips: DataUtil.hasTips(fish._id),
+        predators: [], // TODO
+
+        gig: DataUtil.GIG_DICT[fish.gig],
       }
     },
     assembleFish(fishSourceList, isPredator = false) {
@@ -1588,12 +1628,12 @@ export default {
           hasTimeConstraint: fish.startHour !== 0 || fish.endHour !== 24,
           requiredCnt: fish.requiredCnt ?? 0,
           addBuffSuffix: hasPredators && DataUtil.isAllAvailableFish(fish),
-          weatherSetDetail: this.getWeather(fish.weatherSet),
           hasWeatherConstraint:
             fish.previousWeatherSet.length > 0 || fish.weatherSet.length > 0,
           previousWeatherSet: fish.previousWeatherSet,
           weatherSet: fish.weatherSet,
           previousWeatherSetDetail: this.getWeather(fish.previousWeatherSet),
+          weatherSetDetail: this.getWeather(fish.weatherSet),
           patch: fish.patch,
           folklore: folklore && {
             id: folklore._id,
@@ -1617,12 +1657,12 @@ export default {
     getCountDown(fish, now) {
       // utilize 8 hours fish windows computed if exists
       // and not out of time(use 2 fish window cached if necessary)
-      const fishingSpot = this.fishingSpots[fish.locations[0]]
-      if (fishingSpot) {
+      const fishingSpot = fish.gig != null ? null : this.fishingSpots[fish.locations[0]]
+      if (fishingSpot || fish.gig != null) {
         const fishWindowsComputed =
           this.fishListWeatherChangePart[fish._id]?.fishWindows ??
           FishWindow.getNextNFishWindows(
-            fishingSpot.territory_id,
+            fishingSpot?.territory_id,
             new EorzeaTime(EorzeaTime.toEorzeaTime(now)),
             fish.startHour,
             fish.endHour,
