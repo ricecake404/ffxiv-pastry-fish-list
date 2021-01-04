@@ -28,12 +28,13 @@ export default {
       return []
     }
     if (
-      (previousWeatherSet.length === 0 ||
+      territoryId == null ||
+      ((previousWeatherSet.length === 0 ||
         previousWeatherSet.indexOf(
           EorzeaWeather.weatherAt(territoryId, prevPeriodStart)
         ) !== -1) &&
-      (weatherSet.length === 0 ||
-        weatherSet.indexOf(EorzeaWeather.weatherAt(territoryId, periodStart)) !== -1)
+        (weatherSet.length === 0 ||
+          weatherSet.indexOf(EorzeaWeather.weatherAt(territoryId, periodStart)) !== -1))
     ) {
       return intersections.map(range =>
         range.map(hour => periodStart.timeOfHours(hour).toEarthTime())
@@ -58,11 +59,10 @@ export default {
       console.debug('fish window cache not found')
     }
     if (
-      territoryId == null ||
-      (previousWeatherSet.length === 0 &&
-        weatherSet.length === 0 &&
-        hourStart === 0 &&
-        hourEnd === 24)
+      previousWeatherSet.length === 0 &&
+      weatherSet.length === 0 &&
+      hourStart === 0 &&
+      hourEnd === 24
     ) {
       // console.warn('not time and weather restraint fish!')
       return []
