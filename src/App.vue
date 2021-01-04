@@ -1521,12 +1521,12 @@ export default {
       }
     },
     assembleSpearFish(fish) {
-      console.log('fishname', this.getItemName(fish._id))
       return {
         _id: fish._id,
         id: fish._id,
         icon: this.getItemIconClass(fish._id),
         name: this.getItemName(fish._id),
+        gig: DataUtil.GIG_DICT[fish.gig],
         // hasFishingSpot: false,
         fishingSpots: fish.locations.map(location => {
           const gatheringPoint = FIX.SPEAR_FISH_GATHERING_POINTS[location]

@@ -449,6 +449,14 @@ export default {
   INTERVAL_HOUR: INTERVAL_HOUR,
   INTERVAL_DAY: INTERVAL_DAY,
 
+  GIG_ICON: {
+    small: 'bg-060671',
+    normal: 'bg-060672',
+    large: 'bg-060673',
+  },
+
+  GIG_DICT: ['', 'small', 'normal', 'large'],
+
   TUG_ICON: {
     light: '!',
     medium: '! !',

@@ -258,7 +258,15 @@
     "heavy": "重杆"
   },
   "tugTable": {
-    "tugFish": "杆型\\鱼"
+    "tugFish": "杆型 \\ 鱼"
+  },
+  "gigTable": {
+    "gigFish": "鱼叉尖 \\ 鱼"
+  },
+  "gig": {
+    "small": "小型",
+    "normal": "中型",
+    "large": "大型"
   },
   "pastryFishTip": {
     "title": "鱼糕注：",

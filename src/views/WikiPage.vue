@@ -156,7 +156,8 @@
               :i="baitTableLayout.i"
             >
               <div class="grid-content">
-                <fish-tug-table :value="currentFishList" />
+                <fish-tug-table v-if="mode === 'normal'" :value="currentFishList" />
+                <fish-gig-table v-else :value="currentFishList" />
               </div>
             </grid-item>
           </grid-layout>
@@ -205,7 +206,6 @@ import normSpots from '@/store/fishingSpots.json'
 import placeNames from '@/store/placeNames.json'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import EorzeaSimpleMap from '@/components/basic/EorzeaSimpleMap'
-import FishTugTable from '@/components/FishingTugTable'
 import VueGridLayout from 'vue-grid-layout'
 import _ from 'lodash'
 import PinyinMatch from 'pinyin-match'
@@ -216,15 +216,18 @@ import ClickHelper from '@/components/basic/ClickHelper'
 import FishList from '@/components/FishList'
 import OceanFishingFishList from '@/components/OceanFishingFishList/OceanFishingFishList'
 import FIX from '@/store/fix'
+import FishGigTable from '@/components/FishingGigTable'
+import FishTugTable from '@/components/FishingTugTable'
 
 export default {
   name: 'WikiPage',
   components: {
+    FishTugTable,
+    FishGigTable,
     OceanFishingFishList,
     FishList,
     ClickHelper,
     FishDetail,
-    FishTugTable,
     EorzeaSimpleMap,
     GridLayout: VueGridLayout.GridLayout,
     GridItem: VueGridLayout.GridItem,
@@ -354,12 +357,12 @@ export default {
           { x: 7, y: 0, w: 5, h: 17, i: 'map' },
           {
             x: 0,
-            y: 4.2,
+            y: 5.5,
             w: 7,
             h: 18,
             i: 'fishList',
           },
-          { x: 0, y: 0, w: 7, h: 4.2, i: 'fishTugList' },
+          { x: 0, y: 0, w: 7, h: 5.5, i: 'fishTugList' },
         ]
       }
     },
